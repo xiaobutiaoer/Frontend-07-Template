@@ -1,0 +1,116 @@
+<style>
+  .wrap {
+    position: absolute;
+    top: 300px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .item {
+    background-color: #eee;
+    color: #555;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 600;
+    border: 2px solid #fff;
+    display: inline-block;
+    vertical-align: bottom;
+  }
+
+  h4 {
+    margin-top: 250px;
+    text-align: center;
+  }
+</style>
+<h4>珍珑棋局</h4>
+<div class="wrap"></div>
+<script>
+  let pattern = [
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', '']
+  ]
+  let flag = true
+  let show = function () {
+    let wrap = document.querySelector('.wrap')
+    wrap.innerHTML = ''
+    for (let i = 0, l = pattern.length; i < l; i++) {
+      let row = pattern[i]
+      let rowDom = document.createElement('div')
+      let br = document.createElement('br')
+      rowDom.className = 'row'
+      for (let j = 0, rl = pattern.length; j < rl; j++) {
+        let item = document.createElement('div')
+        item.className = 'item'
+        item.innerText = row[j]
+        item.addEventListener('click', () => {
+          move(i, j)
+        })
+        rowDom.appendChild(item)
+      }
+      rowDom.appendChild(br)
+      wrap.appendChild(rowDom)
+    }
+    if (checkWin(pattern)) {
+      alert(`${!flag ? 'X' : 'O'}win`)
+    }
+  }
+
+  let move = function (i, j) {
+    let curFlag = flag ? 'X' : 'O'
+    if (pattern[i][j]) return
+    pattern[i][j] = curFlag
+    flag = !flag
+    show()
+    if (willWin(pattern, flag ? 'X' : 'O')) {
+      console.log(flag ? 'X' : 'O')
+    }
+  }
+
+  let checkWin = function (pattern) {
+    // 横向
+    let curFlag = !flag ? 'X' : 'O'
+    for (let i = 0; i < 3; i++) {
+      let win = true
+      for (let j = 0; j < 3; j++) {
+        if (curFlag !== pattern[i][j]) {
+          win = false
+        }
+      }
+      if (win) return true
+    }
+    for (let i = 0; i < 3; i++) {
+      let win = true
+      for (let j = 0; j < 3; j++) {
+        if (curFlag !== pattern[j][i]) {
+          win = false
+        }
+      }
+      if (win) return true
+    }
+    return false
+  }
+
+  let clone = function (s) {
+    return JSON.parse(JSON.stringify(s))
+  }
+
+  let willWin = function (pattern, type) {
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (pattern[i][j]) continue
+        let tmp = clone(pattern)
+        tmp[i][j] = type
+        if (checkWin(tmp)) {
+          return [i, j]
+        }
+      }
+    }
+    return null
+  }
+
+  show()
+</script>
